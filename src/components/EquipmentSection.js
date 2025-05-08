@@ -1,22 +1,42 @@
-import React from 'react';
-import equipment from '../mock/equipment';
+import React, { useState, useEffect } from 'react';
+import { getEquipment } from '../utilities/api';
+import LoadingSpinner from './LoadingSpinner';
 
 const EquipmentSection = () => {
+  const [equipment, setEquipment] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEquipment = async () => {
+      try {
+        const data = await getEquipment();
+        setEquipment(data);
+      } catch (error) {
+        console.error('Error fetching equipment:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchEquipment();
+  }, []);
+
+  if (isLoading) return <LoadingSpinner />;
+
   return (
-    <div className="bg-white shadow rounded-lg p-6">
-      <h2 className="text-xl font-semibold mb-4">Equipos</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {equipment.map((item) => (
-          <div key={item.id} className="border rounded-lg p-4">
-            <h3 className="font-medium text-lg">{item.name}</h3>
-            <p className={`text-sm ${item.status === 'Operativo' ? 'text-green-600' : 'text-yellow-600'}`}>
-              Estado: {item.status}
-            </p>
-            <p className="text-sm text-gray-600">Última calibración: {item.lastCalibration}</p>
-            <p className="text-sm text-gray-600">Próxima calibración: {item.nextCalibration}</p>
-          </div>
-        ))}
-      </div>
+    <div className="container section">
+      <h2>Equipment</h2>
+      {equipment.length === 0 ? (
+        <p>No equipment available</p>
+      ) : (
+        <ul>
+          {equipment.map((item) => (
+            <li key={item.id} className="card">
+              <h3>{item.name}</h3>
+              <p>Status: {item.status}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
