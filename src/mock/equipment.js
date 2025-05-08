@@ -1,18 +1,5 @@
-const equipment = [
-  {
-    id: 1,
-    name: "Microscopio",
-    status: "Operativo",
-    lastCalibration: "2023-05-15",
-    nextCalibration: "2023-11-15"
-  },
-  {
-    id: 2,
-    name: "Centrífuga",
-    status: "Mantenimiento",
-    lastCalibration: "2023-04-10",
-    nextCalibration: "2023-10-10"
-  }
+module.exports = [
+  { id: '1', name: 'Microscopio', status: 'Operational' },
+  { id: '2', name: 'Centrífuga', status: 'Needs Maintenance' },
+  { id: '3', name: 'Incubadora', status: 'Operational' },
 ];
-
-export default equipment;
