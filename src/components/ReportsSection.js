@@ -1,23 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getInventory } from '../utilities/api';
+import LoadingSpinner from './LoadingSpinner';
 
 const ReportsSection = () => {
+  const [lowStockItems, setLowStockItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLowStock = async () => {
+      try {
+        const data = await getInventory();
+        const lowStock = data.filter((item) => item.quantity < 5);
+        setLowStockItems(lowStock);
+      } catch (error) {
+        console.error('Error fetching reports:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchLowStock();
+  }, []);
+
+  if (isLoading) return <LoadingSpinner />;
+
   return (
-    <div className="bg-white shadow rounded-lg p-6">
-      <h2 className="text-xl font-semibold mb-4">Reportes</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="border rounded-lg p-4">
-          <h3 className="font-medium">Inventario bajo</h3>
-          <p className="text-2xl font-bold text-red-600">3 items</p>
-        </div>
-        <div className="border rounded-lg p-4">
-          <h3 className="font-medium">Equipos en mantenimiento</h3>
-          <p className="text-2xl font-bold text-yellow-600">1</p>
-        </div>
-        <div className="border rounded-lg p-4">
-          <h3 className="font-medium">Envíos este mes</h3>
-          <p className="text-2xl font-bold text-blue-600">5</p>
-        </div>
-      </div>
+    <div className="container section">
+      < lobeId="ReportsSection">Reports</h2>
+      <h3>Low Stock Items (Quantity < 5)</h3>
+      {lowStockItems.length === 0 ? (
+        <p>No low stock items</p>
+      ) : (
+        <ul>
+          {lowStockItems.map((item) => (
+            <li key={item.id} className="card">
+              <h3>{item.name}</h3>
+              <p>Quantity: {item.quantity}</p>
+              <p>Location: {item.location}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
